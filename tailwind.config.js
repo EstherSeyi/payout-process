@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     colors: {
       greyish: {
-        50: "#F2F2F2",
-        100: "#E5E5E5",
+        50: "FBFBFB",
+        100: "#FBFAFA",
         150: "#E8E8E8",
         200: "#C4C5C6",
         250: "#B7B7B7",
@@ -13,6 +13,7 @@ module.exports = {
         350: "#8B8F96",
         400: "#636166",
         450: "#404040",
+        500: "#EDEDED",
       },
       purpleish: {
         50: "#F4F3F8",
@@ -30,7 +31,11 @@ module.exports = {
         white: "#FFFFFF",
       },
     },
-    extend: {},
+    extend: {
+      inset: {
+        "-0.6": "-0.1875rem",
+      },
+    },
   },
   variants: {
     extend: {},
