@@ -1,9 +1,7 @@
+import Routes from "./routes";
+
 function App() {
-  return (
-    <div>
-      <p className="text-4xl">Hello</p>
-    </div>
-  );
+  return <Routes />;
 }
 
 export default App;
