@@ -36,6 +36,10 @@ module.exports = {
       inset: {
         "-0.6": "-0.1875rem",
       },
+      width: {
+        "79%": "79%",
+        "21%": "21%",
+      },
     },
   },
   variants: {
