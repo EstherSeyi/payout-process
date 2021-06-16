@@ -45,7 +45,7 @@ export const InputWithSelect = ({
       <span className="absolute text-xs left-2.5 top-1.5 text-greyish-350">
         {placeholder}
       </span>
-      <input className="border border-greyish-150 border-r-0 w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5" />
+      <input className="border border-greyish-150 border-r-0 w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5 rounded" />
       <Select
         className="w-21% focus:outline-none"
         classNamePrefix="react-select"
