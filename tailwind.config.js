@@ -40,6 +40,9 @@ module.exports = {
         "79%": "79%",
         "21%": "21%",
       },
+      fontSize: {
+        "13px": "13px",
+      },
     },
   },
   variants: {
