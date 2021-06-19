@@ -34,13 +34,13 @@ const Navigation = ({
         ></div>
       </div>
       <ul className="flex text-xs  justify-between items-center text-greyish-250">
-        <li className="text-greyish-400">
+        <li className={` ${page === "amount" ? "text-greyish-400" : ""}`}>
           <Link to="/amount">Amount</Link>
         </li>
-        <li>
+        <li className={` ${page === "recipient" ? "text-greyish-400" : ""}`}>
           <Link to="/recipient">Recipient</Link>
         </li>
-        <li>
+        <li className={` ${page === "review" ? "text-greyish-400" : ""}`}>
           <Link to="/review">Review</Link>
         </li>
         <li className="cursor-not-allowed">Pay</li>
