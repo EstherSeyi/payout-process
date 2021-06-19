@@ -4,17 +4,19 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
 
 import Loading from "../component/Loading";
-import Layout from "../component/layout";
+
 const Payment = lazy(() => import("../pages/payment"));
+const Home = lazy(() => import("../pages/home"));
+const NotFound = lazy(() => import("../pages/not-found"));
 
 const Routes = () => {
   return (
     <Router>
       <Suspense fallback={<Loading />}>
         <Switch>
-          <Layout>
-            <Route path={ROUTES.PAYMENT} component={Payment} />
-          </Layout>
+          <Route exact path="/" component={Home} />
+          <Route path={ROUTES.PAYMENT} component={Payment} />
+          <Route path="*" component={NotFound} />
         </Switch>
       </Suspense>
     </Router>

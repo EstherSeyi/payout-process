@@ -1,1 +1,1 @@
-export const PAYMENT = "/";
+export const PAYMENT = "/:page";

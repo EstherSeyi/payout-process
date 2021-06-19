@@ -4,6 +4,7 @@ const dot = (img?: string) => ({
 
   ":before": {
     backgroundImage: `url(${img})`,
+    minHeight: "100%",
     borderRadius: 10,
     content: '" "',
     display: "block",
