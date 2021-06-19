@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import Logo from "../icons/Logo";
 import Close from "../icons/Close";
@@ -8,8 +9,11 @@ const Layout = ({ children, page }: { children: ReactNode; page: string }) => {
   return (
     <section className="bg-greyish-100 h-screen">
       <div className="bg-misc-white">
-        <div className="flex w-11/12 sm:w-4/6 mx-auto justify-between p-4">
-          <Logo />
+        <div className="flex w-11/12 sm:w-4/6 mx-auto justify-between py-6">
+          <Link to="/">
+            {" "}
+            <Logo />
+          </Link>
           <Navigation
             page={page}
             stylesClasses="max-w-lg w-4/6 hidden sm:block"
