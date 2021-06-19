@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useState, ChangeEventHandler } from "react";
+import { useHistory } from "react-router-dom";
+import { FormikProps } from "formik";
 
 import Button from "../../component/Button";
+import { InputWithLabel as Input } from "../../component/Input";
 
-const Recipient = () => {
+import { ValType } from "../../utils/types";
+
+const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
+  const history = useHistory();
   const [outside, setOutside] = useState(false);
 
   return (
-    <form>
+    <>
       <div className="border-b border-greyish-550 pb-1">
         <p className="text-base text-purpleish-300 font-semibold">Recipient</p>
         <p className="text-sm text-purpleish-100">
@@ -14,18 +20,22 @@ const Recipient = () => {
         </p>
       </div>
       <div className="my-4">
-        <label>
-          <small className="text-13px text-greyish-350">
-            Their email (optional)
-          </small>
-          <input className="w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold py-1 mb-2" />
-        </label>
-        <label>
-          <small className="text-13px text-greyish-350">
-            Full name of the account holder
-          </small>
-          <input className="w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold py-1 mb-2" />
-        </label>
+        <Input
+          label="Their email (optional)"
+          styles="py-1"
+          name="recipientEmail"
+          id="recipientEmail"
+          value={formik.values.recipientEmail}
+          onChange={formik.handleChange}
+        />
+        <Input
+          label="Full name of the account holder"
+          styles="py-1"
+          name="recipientName"
+          value={formik.values.recipientName}
+          onChange={formik.handleChange}
+          id="recipientName"
+        />
       </div>
 
       <p className="text-sm text-purpleish-300 font-semibold border-b border-greyish-550 pb-2 mb-4">
@@ -61,47 +71,80 @@ const Recipient = () => {
         </li>
       </ul>
 
-      {outside ? <Outside /> : <Inside />}
+      {outside ? (
+        <Outside
+          accNumber={formik.values.accNumberOrIBAN}
+          swiftOrBICcode={formik.values.swiftOrBICcode}
+          onChange={formik.handleChange}
+        />
+      ) : (
+        <Inside
+          value={formik.values.accNumberOrIBAN}
+          onChange={formik.handleChange}
+        />
+      )}
 
-      <Button styleClasses="mr-5 mt-4 bg-purpleish-250 text-misc-white font-bold">
+      <Button
+        styleClasses="mr-5 mt-4 bg-purpleish-250 text-misc-white font-bold"
+        onClick={() => history.push("/review")}
+      >
         Continue
       </Button>
-    </form>
-  );
-};
-
-const Inside = () => {
-  return (
-    <>
-      <label>
-        <small className="text-13px text-greyish-350">IBAN</small>
-        <input
-          className="w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold py-2 pl-2 mb-2 text-xs"
-          placeholder="DE98370440018929829032"
-        />
-      </label>
     </>
   );
 };
-const Outside = () => {
+
+const Inside = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+}) => {
   return (
     <>
-      <label>
-        <small className="text-13px text-greyish-350">SWIFT / BIC code</small>
-        <input
-          className="w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold py-2 pl-2 mb-2 text-xs"
-          placeholder="BUKBGB22"
-        />
-      </label>
-      <label>
-        <small className="text-13px text-greyish-350">
-          IBAN / Account Number
-        </small>
-        <input
-          className="w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold py-2 pl-2 mb-2 text-xs"
-          placeholder="01234567891"
-        />
-      </label>
+      <Input
+        label="IBAN"
+        styles="py-2 text-xs"
+        placeholder="DE98370440018929829032"
+        id="accNumberOrIBAN"
+        value={value}
+        name="accNumberOrIBAN"
+        onChange={onChange}
+      />
+    </>
+  );
+};
+const Outside = ({
+  onChange,
+  accNumber,
+  swiftOrBICcode,
+}: {
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  accNumber: string;
+  swiftOrBICcode: string;
+}) => {
+  return (
+    <>
+      <Input
+        onChange={onChange}
+        styles="py-2 text-xs"
+        placeholder="BUKBGB22"
+        label="SWIFT / BIC code"
+        name="swiftOrBICcode"
+        value={swiftOrBICcode}
+        id="swiftOrBICcode"
+      />
+
+      <Input
+        value={accNumber}
+        onChange={onChange}
+        styles="py-2 text-xs"
+        placeholder="01234567891"
+        label="IBAN / Account Number"
+        name="accNumberOrIBAN"
+        id="accNumberOrIBAN"
+      />
     </>
   );
 };
