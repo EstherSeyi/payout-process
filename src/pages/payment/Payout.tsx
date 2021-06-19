@@ -121,7 +121,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
           netSend={`${wellConvert.toFixed(2) ?? "0.00"} ${
             data?.query?.from ?? ""
           }`}
-          transactionExchangeRate={data?.info?.rate.fixed(4) ?? "0.00"}
+          transactionExchangeRate={data?.info?.rate.toFixed(4) ?? "0.00"}
         />
       ) : null}
 
