@@ -9,7 +9,13 @@ import { ValType } from "../../utils/types";
 
 const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
   const history = useHistory();
-  const [outside, setOutside] = useState(false);
+  const [outside, setOutside] = useState(!formik.values.isEurope);
+
+  const handleChange = ({ target }: any) => {
+    const { name, value } = target;
+    formik.setFieldValue(name, value);
+    formik.getFieldHelpers(name).setError("");
+  };
 
   return (
     <>
@@ -26,15 +32,21 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
           name="recipientEmail"
           id="recipientEmail"
           value={formik.values.recipientEmail}
-          onChange={formik.handleChange}
+          onChange={handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.errors.recipientEmail && formik.touched.recipientEmail}
+          errorMessage={formik.errors.recipientEmail}
         />
         <Input
           label="Full name of the account holder"
           styles="py-1"
           name="recipientName"
           value={formik.values.recipientName}
-          onChange={formik.handleChange}
+          onChange={handleChange}
           id="recipientName"
+          onBlur={formik.handleBlur}
+          error={formik.errors.recipientName && formik.touched.recipientName}
+          errorMessage={formik.errors.recipientName}
         />
       </div>
 
@@ -75,12 +87,26 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
         <Outside
           accNumber={formik.values.accNumberOrIBAN}
           swiftOrBICcode={formik.values.swiftOrBICcode}
-          onChange={formik.handleChange}
+          onChange={handleChange}
+          onBlur={formik.handleBlur}
+          swiftOrBICcodeError={
+            formik.errors.swiftOrBICcode && formik.touched.swiftOrBICcode
+          }
+          accNumberOrIBANError={
+            formik.errors.accNumberOrIBAN && formik.touched.accNumberOrIBAN
+          }
+          swiftOrBICcodeErrorMessage={formik.errors.swiftOrBICcode}
+          accNumberOrIBANErrorMessage={formik.errors.accNumberOrIBAN}
         />
       ) : (
         <Inside
           value={formik.values.accNumberOrIBAN}
-          onChange={formik.handleChange}
+          onChange={handleChange}
+          error={
+            formik.errors.accNumberOrIBAN && formik.touched.accNumberOrIBAN
+          }
+          errorMessage={formik.errors.accNumberOrIBAN}
+          onBlur={formik.handleBlur}
         />
       )}
 
@@ -97,9 +123,15 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
 const Inside = ({
   value,
   onChange,
+  error,
+  errorMessage,
+  onBlur,
 }: {
   value: string;
+  error?: any;
+  errorMessage?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
+  onBlur?: any;
 }) => {
   return (
     <>
@@ -111,6 +143,9 @@ const Inside = ({
         value={value}
         name="accNumberOrIBAN"
         onChange={onChange}
+        error={error}
+        errorMessage={errorMessage}
+        onBlur={onBlur}
       />
     </>
   );
@@ -119,10 +154,20 @@ const Outside = ({
   onChange,
   accNumber,
   swiftOrBICcode,
+  onBlur,
+  swiftOrBICcodeError,
+  accNumberOrIBANError,
+  swiftOrBICcodeErrorMessage,
+  accNumberOrIBANErrorMessage,
 }: {
   onChange: ChangeEventHandler<HTMLInputElement>;
   accNumber: string;
   swiftOrBICcode: string;
+  onBlur?: any;
+  swiftOrBICcodeError?: any;
+  accNumberOrIBANError?: any;
+  swiftOrBICcodeErrorMessage?: string;
+  accNumberOrIBANErrorMessage?: string;
 }) => {
   return (
     <>
@@ -134,6 +179,9 @@ const Outside = ({
         name="swiftOrBICcode"
         value={swiftOrBICcode}
         id="swiftOrBICcode"
+        onBlur={onBlur}
+        error={swiftOrBICcodeError}
+        errorMessage={swiftOrBICcodeErrorMessage}
       />
 
       <Input
@@ -144,6 +192,9 @@ const Outside = ({
         label="IBAN / Account Number"
         name="accNumberOrIBAN"
         id="accNumberOrIBAN"
+        onBlur={onBlur}
+        error={accNumberOrIBANError}
+        errorMessage={accNumberOrIBANErrorMessage}
       />
     </>
   );
