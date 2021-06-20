@@ -14,6 +14,5 @@ export const formatCurrency = (number: number) =>
   new Intl.NumberFormat().format(number);
 
 export const formatInput = (stringNumber: string) => {
-  console.log(stringNumber);
   return stringNumber.replace(/,/g, "");
 };
