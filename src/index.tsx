@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 import "./index.css";
 import App from "./App";
+import CustomToast from "./component/Toast";
 import reportWebVitals from "./reportWebVitals";
 
 const queryClient = new QueryClient({
@@ -18,6 +19,7 @@ const queryClient = new QueryClient({
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
+      <CustomToast />
       <App />
     </QueryClientProvider>
   </React.StrictMode>,
