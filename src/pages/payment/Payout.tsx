@@ -9,6 +9,7 @@ import { STALE_TIME } from "../../constants/payout";
 
 import { InputWithSelect as Input } from "../../component/Input";
 import Button from "../../component/Button";
+import { Toast } from "../../utils/toast-utils";
 
 import currencies, { europeOnly } from "../../constants/currencies";
 import { getOptions } from "../../helpers/format-data";
@@ -45,7 +46,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
     `transferFee_${from}`,
     () => fetch("USD", from, 3.69),
     {
-      enabled: from?.length > 0,
+      enabled: from?.length > 0 && send > 0,
       staleTime: STALE_TIME,
     }
   );
@@ -82,12 +83,21 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
   useEffect(() => {
     const querySub = queryObs.subscribe(async (deb: any) => {
       setQueryKey(`${deb}`);
-      if (fee?.result > Number(formik.values.send)) {
-        console.log("Value must be more than fees");
-      }
     });
     return () => querySub.unsubscribe();
-  }, [fee?.result, formik.values.send]);
+  }, []);
+
+  useEffect(() => {
+    if (send !== 0 && fee?.result > Number(send) && to !== "") {
+      formik.setFieldValue("receive", 0);
+      Toast({
+        type: "error",
+        message: `'You send' value must be more than transfer fee ${formatCurrency(
+          fee?.result.toFixed(2) ?? 0
+        )} ${from ?? ""}`,
+      });
+    }
+  }, [fee?.result, send, to, from]);
 
   useEffect(() => {
     if (fee?.result) {
@@ -120,6 +130,8 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
 
   const wellConvert = Number(send) - fee?.result;
 
+  console.log(fee);
+
   return (
     <>
       <p
@@ -145,7 +157,6 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
         selectName="from"
         styleClasses={`mt-5 ${!showDetails ? "mb-3" : ""}`}
         onSelectChange={handleSelectChange}
-        disabled={formik.values.from === ""}
         error={formik.errors.send && formik.touched.send}
         errorMessage={formik.errors.send}
         onBlur={formik.handleBlur}
@@ -176,7 +187,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
             ? { label: formik.values.to, value: formik.values.to }
             : null
         }
-        value={formatCurrency(formik.values.receive)}
+        value={formatCurrency(formik.values.receive) ?? 0}
         onChange={handleChange}
         name="receive"
         selectName="to"
@@ -197,10 +208,17 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
           Compare Rates
         </Button>
         <Button
-          disabled={!showDetails}
+          // disabled={!showDetails}
           styleClasses="bg-purpleish-150 text-misc-white"
           onClick={() => {
-            history.push("/recipient");
+            if (showDetails) {
+              history.push(`/recipient?page=${2}`);
+            } else {
+              Toast({
+                type: "error",
+                message: "",
+              });
+            }
           }}
         >
           Continue
