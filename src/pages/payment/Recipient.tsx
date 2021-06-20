@@ -4,6 +4,7 @@ import { FormikProps } from "formik";
 
 import Button from "../../component/Button";
 import { InputWithLabel as Input } from "../../component/Input";
+import { Toast } from "../../utils/toast-utils";
 
 import { ValType } from "../../utils/types";
 
@@ -112,7 +113,17 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
 
       <Button
         styleClasses="mr-5 mt-4 bg-purpleish-250 text-misc-white font-bold"
-        onClick={() => history.push("/review")}
+        onClick={() => {
+          formik.validateForm(formik.values);
+
+          if (formik.isValid && formik.dirty) {
+            history.push(`/review?page=${3}`);
+          } else
+            Toast({
+              type: "error",
+              message: "Please provide required fields",
+            });
+        }}
       >
         Continue
       </Button>
