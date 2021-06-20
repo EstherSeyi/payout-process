@@ -21,14 +21,14 @@ const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
         <div className="text-greyish-350 flex justify-between mb-2">
           <p>Total fees (included)</p>
           <p className=" text-greyish-450">
-            {formatCurrency(formik.values.transferFee)}
+            {formatCurrency(formik.values.transferFee)} {formik.values.from}
           </p>
         </div>
         <div className="text-greyish-350 flex justify-between mb-2">
           <p>Amount we’ll convert</p>
           <p className=" text-greyish-450">{`${formatCurrency(
             Number(formik.values.send) - formik.values.transferFee
-          )}`}</p>
+          )} ${formik.values.from}`}</p>
         </div>
         <div className="text-greyish-350 flex justify-between mb-2">
           <p>Guaranteed rate</p>
