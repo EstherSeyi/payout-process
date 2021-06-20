@@ -103,7 +103,7 @@ export const InputWithSelect = ({
         value={defaultVal}
       />
       {error && (
-        <span className="absolute text-10px bottom-0 text-misc-error left-2.5">
+        <span className="absolute text-10px bottom-0 text-misc-error left-2.5 truncate">
           {errorMessage}
         </span>
       )}
@@ -149,7 +149,7 @@ export const InputWithLabel = ({
         onBlur={onBlur}
       />
       {error && (
-        <span className="absolute text-10px -bottom-4 text-misc-error left-2.5">
+        <span className="absolute text-10px -bottom-4 text-misc-error left-2.5 truncate">
           {errorMessage}
         </span>
       )}
