@@ -1,4 +1,4 @@
-import { useState, ChangeEventHandler } from "react";
+import { ChangeEventHandler } from "react";
 import { useHistory, Redirect } from "react-router-dom";
 import { FormikProps } from "formik";
 
@@ -9,16 +9,26 @@ import { Toast } from "../../utils/toast-utils";
 import { ValType } from "../../utils/types";
 import { amountPageIsInvalid } from "../../helpers/invalid-previous-page";
 
+/**
+ * Recipient Component holds the second stage of the Payout Process form
+ * @param {formik} object with all the form values and helders
+ * @returns jsx
+ */
 const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
   const history = useHistory();
-  const [outside, setOutside] = useState(!formik.values.isEurope);
 
+  /**
+   * Handles change of the input fields.
+   */
   const handleChange = ({ target }: any) => {
     const { name, value } = target;
     formik.setFieldValue(name, value);
     formik.getFieldHelpers(name).setError("");
   };
 
+  /**
+   * if data on the amount screen gets lost (for instance if a user refreshes), the user is redirected to refill lost data
+   */
   return amountPageIsInvalid(formik) ? (
     <Redirect to={`/amount?page=${1}`} />
   ) : (
@@ -62,32 +72,32 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
         <li
           className={`px-4     cursor-pointer
           ${
-            outside
+            !formik.values.isEurope
               ? "text-greyish-350"
               : "text-purpleish-250 border-b-2 border-purpleish-250 font-bold"
           }
           
           `}
-          onClick={() => setOutside(false)}
         >
           Inside Europe
         </li>
         <li
           className={`px-4 cursor-pointer
           ${
-            outside
+            !formik.values.isEurope
               ? "text-purpleish-250 border-b-2 border-purpleish-250 font-bold"
               : "text-greyish-350"
           }
           
           `}
-          onClick={() => setOutside(true)}
         >
           Outside Europe
         </li>
       </ul>
 
-      {outside ? (
+      {/* Depending on what 'to' currency a user has chosen, they either fill the inputs in the Outside or Inside components */}
+
+      {!formik.values.isEurope ? (
         <Outside
           accNumber={formik.values.accNumberOrIBAN}
           swiftOrBICcode={formik.values.swiftOrBICcode}

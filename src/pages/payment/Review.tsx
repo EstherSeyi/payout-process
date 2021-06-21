@@ -8,6 +8,11 @@ import { formatCurrency } from "../../helpers/format-data";
 import { Toast } from "../../utils/toast-utils";
 import { useEffect } from "react";
 
+/**
+ * Review holds the first stage of the Payout Process form here users get to review the details previously filled
+ * @param formik object with all the form values and helders
+ * @returns jsx
+ */
 const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
   useEffect(() => {
     formik.validateForm();
@@ -15,6 +20,7 @@ const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
     // eslint-disable-next-line
   }, []);
 
+  //If the form is Invalid at this point for whatever reason, user is redirected to the first page
   return !formik.isValid ? (
     <Redirect to={`/amount?page=${1}`} />
   ) : (

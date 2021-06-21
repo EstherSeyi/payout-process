@@ -3,8 +3,6 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "react-query";
 // import { FormikProps } from "formik";
-import { debounceTime } from "rxjs/operators";
-import { Subject } from "rxjs";
 import { STALE_TIME } from "../../constants/payout";
 
 import { InputWithSelect as Input } from "../../component/Input";
@@ -18,6 +16,7 @@ import { fetch } from "../../helpers/fetch-data";
 // import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
 import { useModal } from "../../context/modal";
+// import debounce from "lodash.debounce";
 
 const Row = styled.p.attrs({
   className: "flex relative py-2",
@@ -35,16 +34,22 @@ const Row = styled.p.attrs({
   }
 `;
 
-const queryObs: any = new Subject().pipe(debounceTime(1000));
+/**
+ * Payout Component holds the first stage of the Payout Process form
+ * @param formik object with all the form values and helders
+ * @returns jsx
+ */
 const Payout = ({ formik }: any) => {
   const { open } = useModal();
   const history = useHistory();
   const { setFieldValue } = formik;
   const [showDetails, setShowDetails] = useState(false);
-  const [queryKey, setQueryKey] = useState("");
 
   const { from, to, send } = formik.values;
 
+  /**
+   * This operation gets the details of 3.69USD transfer fee coverted to the selected 'from' currency
+   */
   const { data: fee } = useQuery(
     `transferFee_${from}`,
     () => fetch("USD", from, 3.69),
@@ -54,8 +59,11 @@ const Payout = ({ formik }: any) => {
     }
   );
 
+  /**
+   * This operation gets the details of the transaction with both currencies and amount being send minus the transfer fee from the fixer server
+   */
   const { data, isLoading } = useQuery(
-    `convert-request_${queryKey}`,
+    `convert-request_${send}_${to}_${from}`,
     () => fetch(from, to, Number(send) - fee?.result),
     {
       enabled: from?.length > 0 && send > 0 && to.length > 0,
@@ -63,6 +71,9 @@ const Payout = ({ formik }: any) => {
     }
   );
 
+  /**
+   * Sets the value of 'receive' and 'rate' gotten from the request to fixer in state.
+   */
   useEffect(() => {
     if (data?.result) {
       setFieldValue("receive", data?.result.toFixed(2));
@@ -70,6 +81,9 @@ const Payout = ({ formik }: any) => {
     }
   }, [data?.result, setFieldValue, data?.info?.rate]);
 
+  /**
+   * Shows the details component depending on if all required inputs have been filled.
+   */
   useEffect(() => {
     if (
       from?.length !== 0 &&
@@ -83,13 +97,9 @@ const Payout = ({ formik }: any) => {
     }
   }, [from?.length, to?.length, fee?.result, send]);
 
-  useEffect(() => {
-    const querySub = queryObs.subscribe(async (deb: any) => {
-      setQueryKey(`${deb}`);
-    });
-    return () => querySub.unsubscribe();
-  }, []);
-
+  /**
+   * Notifies user  if amount inputed to be sent is less than the transfer fee.
+   */
   useEffect(() => {
     if (send !== 0 && fee?.result > Number(send) && to !== "") {
       formik.setFieldValue("receive", 0);
@@ -103,31 +113,39 @@ const Payout = ({ formik }: any) => {
     // eslint-disable-next-line
   }, [fee?.result, send, to, from]);
 
+  /**
+   * Sets transfer fee after response is gotten from the server
+   */
   useEffect(() => {
     if (fee?.result) {
       setFieldValue("transferFee", fee?.result);
     }
   }, [fee?.result, setFieldValue]);
 
+  /**
+   * Handles change of the 'You send' amount input.
+   */
   const handleChange = ({ target }: any) => {
     const { value, name } = target;
     formik.setFieldValue(name, value);
     formik.getFieldHelpers(name).setError("");
-    queryObs.next(value);
   };
 
+  /**
+   * Handles change of the currency select fields
+   */
   const handleSelectChange = (
     selected: { label: string; value: string },
     { name }: { name: string }
   ) => {
     formik.setFieldValue(name, selected.label);
-    queryObs.next(selected.label);
 
     if (name === "to") {
       formik.setFieldValue("isEurope", europeOnly.includes(selected.label));
     }
   };
 
+  /**Amount that will be converted and sent to recipient */
   const wellConvert = Number(send) - fee?.result;
 
   return (
@@ -185,7 +203,7 @@ const Payout = ({ formik }: any) => {
             ? { label: formik.values.to, value: formik.values.to }
             : null
         }
-        error={formik.errors.to}
+        error={formik.errors.to && formik.touched.to}
         errorMessage={formik.errors.to}
         value={formatCurrency(formik.values.receive) ?? 0}
         onChange={handleChange}
@@ -196,6 +214,7 @@ const Payout = ({ formik }: any) => {
       />
       <div data-testid="button-box" className="flex justify-between mt-6">
         <Button
+          // opens modal to compare rates feature
           onClick={() => open(<Compare />)}
           styleClasses="mr-5 border border-purpleish-250 text-purpleish-250"
         >
@@ -221,6 +240,11 @@ const Payout = ({ formik }: any) => {
   );
 };
 
+/**
+ * TransactionDetails will display transaction details conditionally
+ * @param props props including transfer fee, amout that will be sent and rate.
+ * @returns
+ */
 const TransactionDetails = ({
   transferFee,
   netSend,
