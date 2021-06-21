@@ -76,6 +76,7 @@ export const InputWithSelect = ({
 }: InputType) => {
   return (
     <InputBox
+      data-testid="select-input"
       className={`${styleClasses} relative`}
       error={error ? true : false}
     >
@@ -83,6 +84,7 @@ export const InputWithSelect = ({
         {placeholder}
       </span>
       <input
+        data-testid="select-input__input"
         className={`border  w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5 rounded   ${
           error ? "border-misc-error pb-3" : "border-greyish-150 border-r-0"
         }`}
@@ -103,7 +105,10 @@ export const InputWithSelect = ({
         value={defaultVal}
       />
       {error && (
-        <span className="absolute text-10px bottom-0 text-misc-error left-2.5 truncate">
+        <span
+          data-testid="select-input__error"
+          className="absolute text-10px bottom-0 text-misc-error left-2.5 truncate"
+        >
           {errorMessage}
         </span>
       )}
@@ -135,9 +140,15 @@ export const InputWithLabel = ({
   errorMessage?: string;
 }) => {
   return (
-    <label className="relative" htmlFor={id}>
-      <small className="text-13px text-greyish-350">{label}</small>
+    <label className="relative" htmlFor={id} data-testid="label-input">
+      <small
+        className="text-13px text-greyish-350"
+        data-testid="label-input__text"
+      >
+        {label}
+      </small>
       <input
+        data-testid="label-input__input"
         className={`w-full rounded-sm border  focus:outline-none text-purpleish-300 font-semibold mb-2  pl-2 ${styles} ${
           error ? "pb-3 border-misc-error" : "border-greyish-150"
         }`}
@@ -149,7 +160,10 @@ export const InputWithLabel = ({
         onBlur={onBlur}
       />
       {error && (
-        <span className="absolute text-10px -bottom-4 text-misc-error left-2.5 truncate">
+        <span
+          data-testid="label-input__error"
+          className="absolute text-10px -bottom-4 text-misc-error left-2.5 truncate"
+        >
           {errorMessage}
         </span>
       )}
