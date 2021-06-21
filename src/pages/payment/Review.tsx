@@ -1,13 +1,23 @@
 import { FormikProps } from "formik";
+import { Redirect } from "react-router-dom";
 
 import Button from "../../component/Button";
 
 import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
 import { Toast } from "../../utils/toast-utils";
+import { useEffect } from "react";
 
 const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
-  return (
+  useEffect(() => {
+    formik.validateForm();
+
+    // eslint-disable-next-line
+  }, []);
+
+  return !formik.isValid ? (
+    <Redirect to={`/amount?page=${1}`} />
+  ) : (
     <>
       <p className="border-b border-greyish-550 pb-1 mb-6 text-base text-purpleish-300 font-semibold">
         Review details of your transfer
