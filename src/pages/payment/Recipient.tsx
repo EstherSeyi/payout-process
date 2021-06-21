@@ -1,5 +1,5 @@
 import { useState, ChangeEventHandler } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import { FormikProps } from "formik";
 
 import Button from "../../component/Button";
@@ -7,6 +7,7 @@ import { InputWithLabel as Input } from "../../component/Input";
 import { Toast } from "../../utils/toast-utils";
 
 import { ValType } from "../../utils/types";
+import { amountPageIsInvalid } from "../../helpers/invalid-previous-page";
 
 const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
   const history = useHistory();
@@ -18,7 +19,9 @@ const Recipient = ({ formik }: { formik: FormikProps<ValType> }) => {
     formik.getFieldHelpers(name).setError("");
   };
 
-  return (
+  return amountPageIsInvalid(formik) ? (
+    <Redirect to={`/amount?page=${1}`} />
+  ) : (
     <>
       <div className="border-b border-greyish-550 pb-1">
         <p className="text-base text-purpleish-300 font-semibold">Recipient</p>
