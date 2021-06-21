@@ -16,7 +16,6 @@ import { fetch } from "../../helpers/fetch-data";
 // import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
 import { useModal } from "../../context/modal";
-import debounce from "lodash.debounce";
 
 const Row = styled.p.attrs({
   className: "flex relative py-2",
@@ -103,15 +102,13 @@ const Payout = ({ formik }: any) => {
   useEffect(() => {
     if (send !== 0 && fee?.result > Number(send) && to !== "") {
       formik.setFieldValue("receive", 0);
-
-      debounce(function () {
-        Toast({
-          type: "error",
-          message: `'You send' value must be more than transfer fee ${formatCurrency(
+      formik
+        .getFieldHelpers("send")
+        .setError(
+          `must be more than transfer fee ${formatCurrency(
             fee?.result.toFixed(2) ?? 0
-          )} ${from ?? ""}`,
-        });
-      }, 2000)();
+          )} ${from ?? ""}`
+        );
     }
     // eslint-disable-next-line
   }, [fee?.result, send, to, from]);
