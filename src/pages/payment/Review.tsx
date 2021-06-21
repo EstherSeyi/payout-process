@@ -4,6 +4,7 @@ import Button from "../../component/Button";
 
 import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
+import { Toast } from "../../utils/toast-utils";
 
 const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
   return (
@@ -56,7 +57,12 @@ const Review = ({ formik }: { formik: FormikProps<ValType> }) => {
 
       <Button
         styleClasses="bg-misc-green text-misc-white mt-8 py-3 focus:outline-none"
-        type="submit"
+        onClick={() => {
+          Toast({
+            type: "success",
+            message: "Nicely Done ✨ !",
+          });
+        }}
       >
         Confirm and continue
       </Button>
