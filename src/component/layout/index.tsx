@@ -7,7 +7,7 @@ import Navigation from "./Navigation";
 
 const Layout = ({ children, page }: { children: ReactNode; page: string }) => {
   return (
-    <section className="bg-greyish-100 min-h-screen py-4">
+    <section className="bg-greyish-100 min-h-screen pb-4">
       <div className="bg-misc-white">
         <div className="flex w-11/12 sm:w-4/6 mx-auto justify-between py-6">
           <Link aria-label="logo" to="/">
