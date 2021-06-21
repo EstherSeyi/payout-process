@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "react-query";
-import { FormikProps } from "formik";
+// import { FormikProps } from "formik";
 import { debounceTime } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { STALE_TIME } from "../../constants/payout";
@@ -14,8 +14,8 @@ import Compare from "../../component/Compare";
 
 import currencies, { europeOnly } from "../../constants/currencies";
 import { getOptions } from "../../helpers/format-data";
-import fetch from "../../helpers/fetch-data";
-import { ValType } from "../../utils/types";
+import { fetch } from "../../helpers/fetch-data";
+// import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
 import { useModal } from "../../context/modal";
 
@@ -36,7 +36,7 @@ const Row = styled.p.attrs({
 `;
 
 const queryObs: any = new Subject().pipe(debounceTime(1000));
-const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
+const Payout = ({ formik }: any) => {
   const { open } = useModal();
   const history = useHistory();
   const { setFieldValue } = formik;
@@ -131,7 +131,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
   const wellConvert = Number(send) - fee?.result;
 
   return (
-    <>
+    <div data-testid="payout">
       <p
         className={`italic text-10px text-center ${
           isLoading ? "visible" : "invisible"
@@ -140,7 +140,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
         Loading...
       </p>
 
-      <div>
+      <div data-testid="payout-header">
         <p className="text-base text-purpleish-300 font-semibold">
           One-time Payout
         </p>
@@ -185,6 +185,8 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
             ? { label: formik.values.to, value: formik.values.to }
             : null
         }
+        error={formik.errors.to}
+        errorMessage={formik.errors.to}
         value={formatCurrency(formik.values.receive) ?? 0}
         onChange={handleChange}
         name="receive"
@@ -192,7 +194,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
         onSelectChange={handleSelectChange}
         disabled={true}
       />
-      <div className="flex justify-between mt-6">
+      <div data-testid="button-box" className="flex justify-between mt-6">
         <Button
           onClick={() => open(<Compare />)}
           styleClasses="mr-5 border border-purpleish-250 text-purpleish-250"
@@ -207,7 +209,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
             } else {
               Toast({
                 type: "error",
-                message: "",
+                message: "Provide required inputs",
               });
             }
           }}
@@ -215,7 +217,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
           Continue
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

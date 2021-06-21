@@ -9,7 +9,7 @@ import { getOptions } from "../helpers/format-data";
 import currencies from "../constants/currencies";
 import compareSchema from "../validation/compare-rates";
 import { formatCurrency } from "../helpers/format-data";
-import fetch from "../helpers/fetch-data";
+import { fetch } from "../helpers/fetch-data";
 import { STALE_TIME } from "../constants/payout";
 
 const Compare = () => {
