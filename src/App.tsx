@@ -1,7 +1,11 @@
 import Routes from "./routes";
 
 function App() {
-  return <Routes />;
+  return (
+    <main data-testid="application">
+      <Routes />
+    </main>
+  );
 }
 
 export default App;
