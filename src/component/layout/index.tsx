@@ -10,7 +10,7 @@ const Layout = ({ children, page }: { children: ReactNode; page: string }) => {
     <section className="bg-greyish-100 min-h-screen py-4">
       <div className="bg-misc-white">
         <div className="flex w-11/12 sm:w-4/6 mx-auto justify-between py-6">
-          <Link to="/">
+          <Link aria-label="logo" to="/">
             {" "}
             <Logo />
           </Link>
@@ -18,7 +18,7 @@ const Layout = ({ children, page }: { children: ReactNode; page: string }) => {
             page={page}
             stylesClasses="max-w-lg w-4/6 hidden sm:block"
           />
-          <button>
+          <button aria-label="close">
             <Close color="#918DAB" />
           </button>
         </div>

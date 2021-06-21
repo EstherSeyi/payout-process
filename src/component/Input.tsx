@@ -80,10 +80,14 @@ export const InputWithSelect = ({
       className={`${styleClasses} relative`}
       error={error ? true : false}
     >
-      <span className="absolute text-xs left-2.5 top-1.5 text-greyish-350">
+      <label
+        htmlFor={name}
+        className="absolute text-xs left-2.5 top-1.5 text-greyish-350"
+      >
         {placeholder}
-      </span>
+      </label>
       <input
+        id={name}
         data-testid="select-input__input"
         className={`border  w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5 rounded   ${
           error ? "border-misc-error pb-3" : "border-greyish-150 border-r-0"
