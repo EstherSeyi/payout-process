@@ -10,6 +10,10 @@ In the project directory, you run `yarn` to install dependencies.
 
 Add .env file with variables as stated in the .env.example file
 
+## Assumptions you have made
+
+I'm not persisting app's state, data is lost if a user refreshes, since it's a payout process, I'm assuming it's a good idea not to persist data.
+
 ## Instructions to configure and prepare the source code to build and run properly.
 
 Run `yarn start` to get app running.
