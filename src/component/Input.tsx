@@ -1,17 +1,25 @@
 import { ChangeEventHandler } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Select from "react-select";
 
 import { optionStyles } from "../utils/react-select-custom-styles";
 import CaretDown from "./icons/CaretDown";
 
-const InputBox = styled.div`
+const InputBox = styled.div<{ error?: boolean }>`
   display: flex;
   .react-select__control {
     border: none;
     background-color: #f4f3f8;
     box-shadow: none;
-    padding: 0.5em 0;
+
+    ${({ error }) =>
+      error
+        ? css`
+            padding: 0.75em 0;
+          `
+        : css`
+            padding: 0.5em 0;
+          `}
   }
 
   .react-select__indicator-separator {
@@ -38,14 +46,17 @@ type InputType = {
     value: string;
     label: string;
   }>;
-  defaultVal: string;
+  defaultVal?: any;
   styleClasses?: string;
-  value: string;
+  value: string | number;
   name: string;
   selectName: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onSelectChange: any;
   disabled?: boolean;
+  error?: any;
+  onBlur?: any;
+  errorMessage?: string;
 };
 
 export const InputWithSelect = ({
@@ -58,28 +69,49 @@ export const InputWithSelect = ({
   onSelectChange,
   selectName,
   disabled,
+  error,
+  onBlur,
+  errorMessage,
+  defaultVal = null,
 }: InputType) => {
   return (
-    <InputBox className={`${styleClasses} relative`}>
+    <InputBox
+      data-testid="select-input"
+      className={`${styleClasses} relative`}
+      error={error ? true : false}
+    >
       <span className="absolute text-xs left-2.5 top-1.5 text-greyish-350">
         {placeholder}
       </span>
       <input
-        className="border border-greyish-150 border-r-0 w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5 rounded"
+        data-testid="select-input__input"
+        className={`border  w-79% focus:outline-none text-purpleish-300 font-semibold pt-4 pl-2.5 rounded   ${
+          error ? "border-misc-error pb-3" : "border-greyish-150 border-r-0"
+        }`}
         value={value}
         onChange={onChange}
         name={name}
         disabled={disabled}
+        onBlur={onBlur}
       />
       <Select
-        className="w-21% focus:outline-none"
+        className="w-21% focus:outline-none -left-1"
         classNamePrefix="react-select"
         styles={optionStyles}
         options={options}
         components={{ DropdownIndicator: CaretDown }}
         onChange={onSelectChange}
         name={selectName}
+        value={defaultVal}
       />
+      {error && (
+        <span
+          data-testid="select-input__error"
+          className="absolute text-10px bottom-0 text-misc-error left-2.5 truncate"
+        >
+          {errorMessage}
+        </span>
+      )}
     </InputBox>
   );
 };
@@ -92,6 +124,9 @@ export const InputWithLabel = ({
   name,
   value,
   id,
+  error,
+  errorMessage,
+  onBlur,
 }: {
   label: string;
   styles?: string;
@@ -100,18 +135,38 @@ export const InputWithLabel = ({
   name: string;
   value: string;
   id?: string;
+  error?: any;
+  onBlur?: any;
+  errorMessage?: string;
 }) => {
   return (
-    <label htmlFor={id}>
-      <small className="text-13px text-greyish-350">{label}</small>
+    <label className="relative" htmlFor={id} data-testid="label-input">
+      <small
+        className="text-13px text-greyish-350"
+        data-testid="label-input__text"
+      >
+        {label}
+      </small>
       <input
-        className={`w-full rounded-sm border border-greyish-150 focus:outline-none text-purpleish-300 font-semibold mb-2  pl-2 ${styles}`}
+        data-testid="label-input__input"
+        className={`w-full rounded-sm border  focus:outline-none text-purpleish-300 font-semibold mb-2  pl-2 ${styles} ${
+          error ? "pb-3 border-misc-error" : "border-greyish-150"
+        }`}
         placeholder={placeholder}
         onChange={onChange}
         name={name}
         value={value}
         id={id}
+        onBlur={onBlur}
       />
+      {error && (
+        <span
+          data-testid="label-input__error"
+          className="absolute text-10px -bottom-4 text-misc-error left-2.5 truncate"
+        >
+          {errorMessage}
+        </span>
+      )}
     </label>
   );
 };

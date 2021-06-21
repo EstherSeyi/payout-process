@@ -5,14 +5,17 @@ import { useQuery } from "react-query";
 import { FormikProps } from "formik";
 import { debounceTime } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { STALE_TIME } from "../../constants/payout";
 
 import { InputWithSelect as Input } from "../../component/Input";
 import Button from "../../component/Button";
+import { Toast } from "../../utils/toast-utils";
 
-import currencies from "../../constants/currencies";
+import currencies, { europeOnly } from "../../constants/currencies";
 import { getOptions } from "../../helpers/format-data";
 import fetch from "../../helpers/fetch-data";
 import { ValType } from "../../utils/types";
+import { formatCurrency } from "../../helpers/format-data";
 
 const Row = styled.p.attrs({
   className: "flex relative py-2",
@@ -43,15 +46,17 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
     `transferFee_${from}`,
     () => fetch("USD", from, 3.69),
     {
-      enabled: from?.length > 0,
+      enabled: from?.length > 0 && send > 0,
+      staleTime: STALE_TIME,
     }
   );
 
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     `convert-request_${queryKey}`,
     () => fetch(from, to, Number(send) - fee?.result),
     {
-      enabled: from?.length > 0 && send?.length > 0 && to.length > 0,
+      enabled: from?.length > 0 && send > 0 && to.length > 0,
+      staleTime: STALE_TIME,
     }
   );
 
@@ -63,11 +68,37 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
   }, [data?.result, setFieldValue, data?.info?.rate]);
 
   useEffect(() => {
+    if (
+      from?.length !== 0 &&
+      to?.length !== 0 &&
+      fee?.result &&
+      Number(send) > fee?.result
+    ) {
+      setShowDetails(true);
+    } else {
+      setShowDetails(false);
+    }
+  }, [from?.length, to?.length, fee?.result, send]);
+
+  useEffect(() => {
     const querySub = queryObs.subscribe(async (deb: any) => {
       setQueryKey(`${deb}`);
     });
     return () => querySub.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (send !== 0 && fee?.result > Number(send) && to !== "") {
+      formik.setFieldValue("receive", 0);
+      Toast({
+        type: "error",
+        message: `'You send' value must be more than transfer fee ${formatCurrency(
+          fee?.result.toFixed(2) ?? 0
+        )} ${from ?? ""}`,
+      });
+    }
+    // eslint-disable-next-line
+  }, [fee?.result, send, to, from]);
 
   useEffect(() => {
     if (fee?.result) {
@@ -78,12 +109,20 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
   const handleChange = ({ target }: any) => {
     const { value, name } = target;
     formik.setFieldValue(name, value);
+    formik.getFieldHelpers(name).setError("");
     queryObs.next(value);
   };
 
-  const handleSelectChange = (selected: any, { name }: any) => {
+  const handleSelectChange = (
+    selected: { label: string; value: string },
+    { name }: { name: string }
+  ) => {
     formik.setFieldValue(name, selected.label);
     queryObs.next(selected.label);
+
+    if (name === "to") {
+      formik.setFieldValue("isEurope", europeOnly.includes(selected.label));
+    }
   };
 
   const handleCompareRates = () => {
@@ -94,6 +133,14 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
 
   return (
     <>
+      <p
+        className={`italic text-10px text-center ${
+          isLoading ? "visible" : "invisible"
+        }`}
+      >
+        Loading...
+      </p>
+
       <div>
         <p className="text-base text-purpleish-300 font-semibold">
           One-time Payout
@@ -103,19 +150,25 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
       <Input
         placeholder="You send"
         options={getOptions(currencies)}
-        defaultVal={getOptions(currencies)[0].label}
         value={formik.values.send}
         onChange={handleChange}
         name="send"
         selectName="from"
         styleClasses={`mt-5 ${!showDetails ? "mb-3" : ""}`}
         onSelectChange={handleSelectChange}
-        disabled={formik.values.from === ""}
+        error={formik.errors.send && formik.touched.send}
+        errorMessage={formik.errors.send}
+        onBlur={formik.handleBlur}
+        defaultVal={
+          formik.values.from !== ""
+            ? { label: formik.values.from, value: formik.values.from }
+            : null
+        }
       />
 
       {showDetails ? (
         <TransactionDetails
-          transferFee={`${fee?.result.toFixed(2) ?? "0.00"} ${
+          transferFee={`${formatCurrency(fee?.result.toFixed(2) ?? 0)} ${
             fee?.query?.to ?? ""
           }`}
           netSend={`${wellConvert.toFixed(2) ?? "0.00"} ${
@@ -128,8 +181,12 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
       <Input
         placeholder="Recipient gets"
         options={getOptions(currencies)}
-        defaultVal={getOptions(currencies)[0].label}
-        value={formik.values.receive}
+        defaultVal={
+          formik.values.to !== ""
+            ? { label: formik.values.to, value: formik.values.to }
+            : null
+        }
+        value={formatCurrency(formik.values.receive) ?? 0}
         onChange={handleChange}
         name="receive"
         selectName="to"
@@ -150,9 +207,18 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
           Compare Rates
         </Button>
         <Button
-          disabled={!showDetails}
+          // disabled={!showDetails}
           styleClasses="bg-purpleish-150 text-misc-white"
-          onClick={() => history.push("/recipient")}
+          onClick={() => {
+            if (showDetails) {
+              history.push(`/recipient?page=${2}`);
+            } else {
+              Toast({
+                type: "error",
+                message: "",
+              });
+            }
+          }}
         >
           Continue
         </Button>

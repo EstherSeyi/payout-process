@@ -160,3 +160,31 @@ const currencies = {
 };
 
 export default currencies;
+
+export const europeOnly = [
+  "RUB",
+  "XPF",
+  "EUR",
+  "ITL",
+  "ESP",
+  "UAH",
+  "PLN",
+  "RON",
+  "ANG",
+  "CZK",
+  "SEK",
+  "HUF",
+  "BYN",
+  "RSD",
+  "CHF",
+  "BGN",
+  "DKK",
+  "NOK",
+  "HRK",
+  "MDL",
+  "BAM",
+  "ALL",
+  "LTL",
+  "MKD",
+  "ISK",
+];

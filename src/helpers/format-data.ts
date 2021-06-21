@@ -10,10 +10,14 @@ export const getOptions = (currencies: Object) => {
   return result;
 };
 
-export const formatCurrency = (number: number) =>
-  new Intl.NumberFormat().format(number);
+export const formatCurrency = (number: number) => {
+  if (isNaN(number)) {
+    return "0.00";
+  } else {
+    return new Intl.NumberFormat().format(number);
+  }
+};
 
 export const formatInput = (stringNumber: string) => {
-  console.log(stringNumber);
   return stringNumber.replace(/,/g, "");
 };

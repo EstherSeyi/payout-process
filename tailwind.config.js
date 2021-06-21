@@ -30,6 +30,7 @@ module.exports = {
       misc: {
         green: "#6FAE75",
         white: "#FFFFFF",
+        error: "#d40e0e",
       },
     },
     extend: {
@@ -43,6 +44,7 @@ module.exports = {
         "21%": "21%",
       },
       fontSize: {
+        "10px": "10px",
         "13px": "13px",
         "16px": "16px",
       },

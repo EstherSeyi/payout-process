@@ -19,6 +19,7 @@ const Button = ({
 }: ButtonProp) => {
   return (
     <button
+      data-testid="button"
       type={type}
       className={`px-.5 py-2  w-full rounded text-xs sm:text-sm font-bold focus:outline-none ${styleClasses} ${
         disabled ? "cursor-not-allowed" : ""
