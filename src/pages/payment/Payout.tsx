@@ -130,8 +130,6 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
 
   const wellConvert = Number(send) - fee?.result;
 
-  console.log(fee);
-
   return (
     <>
       <p

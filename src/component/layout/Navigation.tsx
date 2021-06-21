@@ -15,8 +15,6 @@ const Navigation = ({
   const query = useQuery();
 
   const pageNumber = query.get("page");
-
-  console.log("Page Number is: ", query.get("page"));
   return (
     <nav className={stylesClasses}>
       <div className="mx-auto border border-greyish-500  mb-2 w-11/12 relative">
