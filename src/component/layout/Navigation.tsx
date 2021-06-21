@@ -14,6 +14,8 @@ const Navigation = ({
 }) => {
   const query = useQuery();
 
+  const pageNumber = query.get("page");
+
   console.log("Page Number is: ", query.get("page"));
   return (
     <nav className={stylesClasses}>
@@ -44,10 +46,18 @@ const Navigation = ({
           <Link to={`/amount?page=${1}`}>Amount</Link>
         </li>
         <li className={` ${page === "recipient" ? "text-greyish-400" : ""}`}>
-          <Link to={`/recipient?page=${2}`}>Recipient</Link>
+          {pageNumber && Number(pageNumber) >= 2 ? (
+            <Link to={`/recipient?page=${2}`}>Recipient</Link>
+          ) : (
+            <span>Recipient</span>
+          )}
         </li>
         <li className={` ${page === "review" ? "text-greyish-400" : ""}`}>
-          <Link to={`/review?page=${3}`}>Review</Link>
+          {pageNumber && Number(pageNumber) >= 3 ? (
+            <Link to={`/review?page=${3}`}>Review</Link>
+          ) : (
+            <span>Review</span>
+          )}
         </li>
         <li className="cursor-not-allowed">Pay</li>
       </ul>
