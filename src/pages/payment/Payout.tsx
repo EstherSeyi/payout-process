@@ -10,12 +10,14 @@ import { STALE_TIME } from "../../constants/payout";
 import { InputWithSelect as Input } from "../../component/Input";
 import Button from "../../component/Button";
 import { Toast } from "../../utils/toast-utils";
+import Compare from "../../component/Compare";
 
 import currencies, { europeOnly } from "../../constants/currencies";
 import { getOptions } from "../../helpers/format-data";
 import fetch from "../../helpers/fetch-data";
 import { ValType } from "../../utils/types";
 import { formatCurrency } from "../../helpers/format-data";
+import { useModal } from "../../context/modal";
 
 const Row = styled.p.attrs({
   className: "flex relative py-2",
@@ -35,6 +37,7 @@ const Row = styled.p.attrs({
 
 const queryObs: any = new Subject().pipe(debounceTime(1000));
 const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
+  const { open } = useModal();
   const history = useHistory();
   const { setFieldValue } = formik;
   const [showDetails, setShowDetails] = useState(false);
@@ -125,10 +128,6 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
     }
   };
 
-  const handleCompareRates = () => {
-    setShowDetails(true);
-  };
-
   const wellConvert = Number(send) - fee?.result;
 
   return (
@@ -195,19 +194,12 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
       />
       <div className="flex justify-between mt-6">
         <Button
-          onClick={handleCompareRates}
+          onClick={() => open(<Compare />)}
           styleClasses="mr-5 border border-purpleish-250 text-purpleish-250"
-          disabled={
-            from?.length === 0 ||
-            to?.length === 0 ||
-            !fee?.result ||
-            Number(send) <= fee?.result
-          }
         >
           Compare Rates
         </Button>
         <Button
-          // disabled={!showDetails}
           styleClasses="bg-purpleish-150 text-misc-white"
           onClick={() => {
             if (showDetails) {
