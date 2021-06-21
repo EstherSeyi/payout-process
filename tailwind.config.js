@@ -1,5 +1,14 @@
 module.exports = {
-  purge: ["./src/**/*.html", "./src/**/*.ts", "./src/**/*.tsx"],
+  mode: "jit",
+  purge: [
+    "./src/**/*.html",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.jsx",
+  ],
+  corePlugins: {
+    float: false,
+  },
   darkMode: false, // or 'media' or 'class'
   theme: {
     colors: {
