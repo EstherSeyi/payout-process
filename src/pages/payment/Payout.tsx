@@ -97,6 +97,7 @@ const Payout = ({ formik }: { formik: FormikProps<ValType> }) => {
         )} ${from ?? ""}`,
       });
     }
+    // eslint-disable-next-line
   }, [fee?.result, send, to, from]);
 
   useEffect(() => {
