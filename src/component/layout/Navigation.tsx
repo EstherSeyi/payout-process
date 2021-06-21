@@ -44,6 +44,7 @@ const Navigation = ({
           <Link to={`/amount?page=${1}`}>Amount</Link>
         </li>
         <li className={` ${page === "recipient" ? "text-greyish-400" : ""}`}>
+          {/* Links are clickable from the nav only if you are on a page and are trying to go to the previous page, this is to prevent users from skipping my validation efforts and moving to a future screen without filling all required input */}
           {pageNumber && Number(pageNumber) >= 2 ? (
             <Link to={`/recipient?page=${2}`}>Recipient</Link>
           ) : (

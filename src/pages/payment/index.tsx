@@ -12,6 +12,10 @@ const Review = lazy(() => import("./Review"));
 const Payout = lazy(() => import("./Payout"));
 const Recipient = lazy(() => import("./Recipient"));
 
+/**
+ * Payment Component parent form component
+ * @returns jsx
+ */
 const Payment = () => {
   const { page } = useParams<any>();
 
@@ -31,6 +35,7 @@ const Payment = () => {
             className="mt-16 sm:border border-greyish-550 max-w-lg mx-auto bg-misc-white p-6 mb-4"
             data-testid="payment"
           >
+            {/* Form sections are rendered conditionally depending on the page param */}
             {page === "amount" ? (
               <Payout formik={formik} />
             ) : page === "recipient" ? (
